@@ -2,3 +2,6 @@
 name = "piston-tutorial"
 version = "0.1.0"
 authors = ["ramn <github@rymdimperiet.org>"]
+
+[dependencies]
+piston_window = "0.24.0"
