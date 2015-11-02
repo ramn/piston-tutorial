@@ -19,17 +19,18 @@ impl Game {
     fn on_update(&mut self, upd: UpdateArgs) {
         self.rotation += 3.0 * upd.dt;
 
+        let movement_coef = 150.0;
         if self.up_d {
-            self.y += (-50.0) * upd.dt;
+            self.y += (-movement_coef) * upd.dt;
         }
         if self.down_d {
-            self.y += (50.0) * upd.dt;
+            self.y += (movement_coef) * upd.dt;
         }
         if self.left_d {
-            self.x += (-50.0) * upd.dt;
+            self.x += (-movement_coef) * upd.dt;
         }
         if self.right_d {
-            self.x += (50.0) * upd.dt;
+            self.x += (movement_coef) * upd.dt;
         }
     }
 
