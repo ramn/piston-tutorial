@@ -1,6 +1,37 @@
 extern crate piston_window;
-
 use piston_window::*;
+
+
+struct Game {
+    rotation: f64
+}
+
+impl Game {
+    fn new() -> Game {
+        Game { rotation: 0.0 }
+    }
+
+    fn update(&mut self, upd: UpdateArgs) {
+        self.rotation += 3.0 * upd.dt;
+    }
+
+    fn render(&mut self, ren: RenderArgs, e: PistonWindow) {
+        e.draw_2d(|context, graphics| {
+            clear([0.0, 0.0, 0.0, 1.0], graphics);
+            let center = context.transform.trans((ren.width / 2) as f64, (ren.height / 2) as f64);
+            let square = rectangle::square(0.0, 0.0, 100.0);
+            let red = [1.0, 0.0, 0.0, 1.0];
+
+            // We translate the rectangle slightly so that it's centered;
+            // otherwise only the top left corner would be centered
+            rectangle(
+                red,
+                square,
+                center.rot_rad(self.rotation).trans(-50.0, -50.0), graphics);
+        })
+    }
+}
+
 
 fn main() {
     let window: PistonWindow = WindowSettings::new(
@@ -11,27 +42,17 @@ fn main() {
         .build()
         .unwrap();
 
-    let mut rotation = 0.0;
+    let mut game = Game::new();
 
     for e in window {
-
         match e.event {
-            Some(Event::Update(UpdateArgs { dt })) => {
-                rotation += 3.0 * dt;
-
+            Some(Event::Update(upd)) => {
+                game.update(upd);
+            },
+            Some(Event::Render(rend)) => {
+                game.render(rend, e);
             },
             _ => {}
         };
-
-        e.draw_2d(|context, graphics| {
-            clear([0.0, 0.0, 0.0, 1.0], graphics);
-            let center = context.transform.trans(300.0, 300.0);
-            let square = rectangle::square(0.0, 0.0, 100.0);
-            let red = [1.0, 0.0, 0.0, 1.0];
-
-            // We translate the rectangle slightly so that it's centered;
-            // otherwise only the top left corner would be centered
-            rectangle(red, square, center.rot_rad(rotation).trans(-50.0, -50.0), graphics);
-        })
     }
 }
