@@ -30,6 +30,9 @@ impl Game {
                 center.rot_rad(self.rotation).trans(-50.0, -50.0), graphics);
         })
     }
+
+    fn on_input(&mut self, inp: Input) {
+    }
 }
 
 
@@ -48,10 +51,13 @@ fn main() {
         match e.event {
             Some(Event::Update(upd)) => {
                 game.on_update(upd);
-            },
+            }
             Some(Event::Render(rend)) => {
                 game.on_render(rend, e);
-            },
+            }
+            Some(Event::Input(inp)) => {
+                game.on_input(inp);
+            }
             _ => {}
         };
     }
