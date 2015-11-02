@@ -2,17 +2,35 @@ extern crate piston_window;
 use piston_window::*;
 
 
+#[derive(Default)]
 struct Game {
-    rotation: f64
+    rotation: f64,
+    x: f64,
+    y: f64,
+    up_d: bool, down_d: bool, left_d: bool, right_d: bool
 }
+
 
 impl Game {
     fn new() -> Game {
-        Game { rotation: 0.0 }
+        Game { ..Default::default() }
     }
 
     fn on_update(&mut self, upd: UpdateArgs) {
         self.rotation += 3.0 * upd.dt;
+
+        if self.up_d {
+            self.y += (-50.0) * upd.dt;
+        }
+        if self.down_d {
+            self.y += (50.0) * upd.dt;
+        }
+        if self.left_d {
+            self.x += (-50.0) * upd.dt;
+        }
+        if self.right_d {
+            self.x += (50.0) * upd.dt;
+        }
     }
 
     fn on_render(&mut self, ren: RenderArgs, e: PistonWindow) {
@@ -27,11 +45,52 @@ impl Game {
             rectangle(
                 red,
                 square,
-                center.rot_rad(self.rotation).trans(-50.0, -50.0), graphics);
+                center
+                    .trans(self.x, self.y)
+                    .rot_rad(self.rotation)
+                    .trans(-50.0, -50.0),
+                graphics);
         })
     }
 
     fn on_input(&mut self, inp: Input) {
+        match inp {
+            Input::Press(but) => {
+                match but {
+                    Button::Keyboard(Key::Up) => {
+                        self.up_d = true;
+                    }
+                    Button::Keyboard(Key::Down) => {
+                        self.down_d = true;
+                    }
+                    Button::Keyboard(Key::Left) => {
+                        self.left_d = true;
+                    }
+                    Button::Keyboard(Key::Right) => {
+                        self.right_d = true;
+                    }
+                    _ => {}
+                }
+            }
+            Input::Release(but) => {
+                match but {
+                    Button::Keyboard(Key::Up) => {
+                        self.up_d = false;
+                    }
+                    Button::Keyboard(Key::Down) => {
+                        self.down_d = false;
+                    }
+                    Button::Keyboard(Key::Left) => {
+                        self.left_d = false;
+                    }
+                    Button::Keyboard(Key::Right) => {
+                        self.right_d = false;
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        }
     }
 }
 
