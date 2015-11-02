@@ -11,11 +11,11 @@ impl Game {
         Game { rotation: 0.0 }
     }
 
-    fn update(&mut self, upd: UpdateArgs) {
+    fn on_update(&mut self, upd: UpdateArgs) {
         self.rotation += 3.0 * upd.dt;
     }
 
-    fn render(&mut self, ren: RenderArgs, e: PistonWindow) {
+    fn on_render(&mut self, ren: RenderArgs, e: PistonWindow) {
         e.draw_2d(|context, graphics| {
             clear([0.0, 0.0, 0.0, 1.0], graphics);
             let center = context.transform.trans((ren.width / 2) as f64, (ren.height / 2) as f64);
@@ -47,10 +47,10 @@ fn main() {
     for e in window {
         match e.event {
             Some(Event::Update(upd)) => {
-                game.update(upd);
+                game.on_update(upd);
             },
             Some(Event::Render(rend)) => {
-                game.render(rend, e);
+                game.on_render(rend, e);
             },
             _ => {}
         };
