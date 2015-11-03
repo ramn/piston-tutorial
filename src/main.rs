@@ -1,12 +1,17 @@
 extern crate piston_window;
+extern crate gfx_device_gl;
+extern crate find_folder;
+extern crate gfx_graphics;
+extern crate gfx;
+mod object;
+
 use piston_window::*;
+use object::Object;
 
 
 #[derive(Default)]
 struct Game {
-    rotation: f64,
-    x: f64,
-    y: f64,
+    player: Object,
     up_d: bool, down_d: bool, left_d: bool, right_d: bool
 }
 
@@ -17,20 +22,20 @@ impl Game {
     }
 
     fn on_update(&mut self, upd: UpdateArgs) {
-        self.rotation += 3.0 * upd.dt;
-
         let movement_coef = 150.0;
+        let movement = movement_coef * upd.dt;
+
         if self.up_d {
-            self.y += (-movement_coef) * upd.dt;
+            self.player.mov(0.0, -1.0 * movement);
         }
         if self.down_d {
-            self.y += (movement_coef) * upd.dt;
+            self.player.mov(0.0, movement);
         }
         if self.left_d {
-            self.x += (-movement_coef) * upd.dt;
+            self.player.mov(-1.0 * movement, 0.0);
         }
         if self.right_d {
-            self.x += (movement_coef) * upd.dt;
+            self.player.mov(movement, 0.0);
         }
     }
 
@@ -38,19 +43,7 @@ impl Game {
         e.draw_2d(|context, graphics| {
             clear([0.0, 0.0, 0.0, 1.0], graphics);
             let center = context.transform.trans((ren.width / 2) as f64, (ren.height / 2) as f64);
-            let square = rectangle::square(0.0, 0.0, 100.0);
-            let red = [1.0, 0.0, 0.0, 1.0];
-
-            // We translate the rectangle slightly so that it's centered;
-            // otherwise only the top left corner would be centered
-            rectangle(
-                red,
-                square,
-                center
-                    .trans(self.x, self.y)
-                    .rot_rad(self.rotation)
-                    .trans(-50.0, -50.0),
-                graphics);
+            self.player.render(graphics, center);
         })
     }
 
@@ -93,6 +86,20 @@ impl Game {
             _ => {}
         }
     }
+
+    fn on_load(&mut self, w: &PistonWindow) {
+        let assets = find_folder::Search::ParentsThenKids(3, 3)
+            .for_folder("assets").unwrap();
+        let tank_sprite = assets.join("tank.png");
+        let tank_sprite = Texture::from_path(
+            // &mut *w.factory.borrow_mut(),
+            &mut *w.factory.borrow_mut(),
+            &tank_sprite,
+            Flip::None,
+            &TextureSettings::new()
+            ).unwrap();
+        self.player.set_sprite(tank_sprite);
+    }
 }
 
 
@@ -104,8 +111,8 @@ fn main() {
         .exit_on_esc(true)
         .build()
         .unwrap();
-
     let mut game = Game::new();
+    game.on_load(&window);
 
     for e in window {
         match e.event {
