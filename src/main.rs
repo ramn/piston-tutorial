@@ -90,15 +90,22 @@ impl Game {
     fn on_load(&mut self, w: &PistonWindow) {
         let assets = find_folder::Search::ParentsThenKids(3, 3)
             .for_folder("assets").unwrap();
-        let tank_sprite = assets.join("tank.png");
+        let tank_sprite = assets.join("tank_base.png");
         let tank_sprite = Texture::from_path(
-            // &mut *w.factory.borrow_mut(),
             &mut *w.factory.borrow_mut(),
             &tank_sprite,
             Flip::None,
-            &TextureSettings::new()
-            ).unwrap();
+            &TextureSettings::new())
+            .unwrap();
+        let tank_turret = assets.join("tank_turret.png");
+        let tank_turret = Texture::from_path(
+            &mut *w.factory.borrow_mut(),
+            &tank_turret,
+            Flip::None,
+            &TextureSettings::new())
+            .unwrap();
         self.player.set_sprite(tank_sprite);
+        self.player.set_turret_sprite(tank_turret);
     }
 }
 
