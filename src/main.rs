@@ -12,7 +12,8 @@ use object::Object;
 #[derive(Default)]
 struct Game {
     player: Object,
-    up_d: bool, down_d: bool, left_d: bool, right_d: bool
+    up_d: bool, down_d: bool, left_d: bool, right_d: bool,
+    scx: f64, scy: f64
 }
 
 
@@ -37,6 +38,8 @@ impl Game {
         if self.right_d {
             self.player.mov(movement, 0.0);
         }
+
+        self.player.update(upd.dt);
     }
 
     fn on_render(&mut self, ren: RenderArgs, e: PistonWindow) {
@@ -45,6 +48,16 @@ impl Game {
             let center = context.transform.trans((ren.width / 2) as f64, (ren.height / 2) as f64);
             self.player.render(graphics, center);
         })
+    }
+
+    fn on_draw(&mut self, ren: RenderArgs, e: PistonWindow) {
+        self.scx = (ren.width / 2) as f64;
+        self.scy = (ren.height / 2) as f64;
+        e.draw_2d(|c, g| {
+            clear([0.8, 0.8, 0.8, 1.0], g);
+            let center = c.transform.trans(self.scx, self.scy);
+            self.player.render(g, center);
+        });
     }
 
     fn on_input(&mut self, inp: Input) {
@@ -79,6 +92,14 @@ impl Game {
                     }
                     Button::Keyboard(Key::Right) => {
                         self.right_d = false;
+                    }
+                    _ => {}
+                }
+            }
+            Input::Move(mot) => {
+                match mot {
+                    Motion::MouseCursor(x, y) => {
+                        self.player.point_tur_to(x - self.scx, y - self.scy);
                     }
                     _ => {}
                 }
