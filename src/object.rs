@@ -1,6 +1,8 @@
 use std::f64::consts::PI;
+
 use piston_window::*;
 use gfx_device_gl::Resources;
+
 
 #[derive(Default)]
 pub struct Object {
