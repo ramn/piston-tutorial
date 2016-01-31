@@ -1,8 +1,6 @@
 use std::f64::consts::PI;
 use piston_window::*;
-use gfx_device_gl::{Resources, Output, CommandBuffer};
-use gfx_graphics::GfxGraphics;
-
+use gfx_device_gl::Resources;
 
 #[derive(Default)]
 pub struct Object {
@@ -15,9 +13,6 @@ pub struct Object {
     rot_tur: f64,
     turret: Option<Texture<Resources>>
 }
-
-
-type Gfx<'a> = GfxGraphics<'a, Resources, CommandBuffer<Resources>, Output>;
 
 
 impl Object {
@@ -35,7 +30,7 @@ impl Object {
         self.y = y;
     }
 
-    pub fn render(&self, g: &mut Gfx, view: math::Matrix2d) {
+    pub fn render(&self, g: &mut G2d, view: math::Matrix2d) {
         let square = rectangle::square(0.0, 0.0, 100.0);
         let red = [1.0, 0.0, 0.0, 1.0];
         match self.sprite {
