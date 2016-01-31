@@ -6,5 +6,4 @@ authors = ["ramn <github@rymdimperiet.org>"]
 [dependencies]
 piston_window = "0.34.0"
 find_folder = "*"
-# freetype-rs = "0.5.0"
 gfx_device_gl = "0.7.0"
